@@ -1,278 +1,279 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Mar 05 10:45:36 2018
-
-@author: ah302
-"""
 import numpy as np
-import matplotlib.pyplot as plt
+import networkx as nx
+import matplotlib as plt
+plt.rcParams['figure.figsize'] = [12.0,12.0]
+def grid_positions(G,scale=1):
+    return dict((n,(scale*n[0],scale*n[1])) for n in G.nodes())
+    
+def edge_subgraph_nodes(E):
+    V = set()
+    for e in E:
+        V.update(e)
+        
+    return V
+    
+def set_node_colors(G,N,color):
+    for n in N:
+        G.node[n]['color'] = color
+        
+def set_edge_colors(G,E,color):
+    for i,j in E:
+        G[i][j]['color'] = color
+        
+def set_edge_weights(G,E,weight):
+    for i,j in E:
+        G[i][j]['weight'] = weight
+        
+def draw_grid(n,X):
+    """
+    Draw an n x n grid with edges / nodes from X in red
+    """
+    
+    G = nx.grid_2d_graph(n+1,n+1)
+    set_node_colors(G,G.nodes(),'k')
+    set_edge_colors(G,G.edges(),'k')
+    set_edge_weights(G,G.edges(),0.5)
+    
+    set_node_colors(G,edge_subgraph_nodes(X),'r')
+    set_edge_colors(G,X,'r')
+    set_edge_weights(G,X,1)
+    
+    nc = [G.node[n]['color'] for n in G.nodes()]
+    ec = [G[i][j]['color'] for i,j in G.edges()]
+    w = [G[i][j]['weight'] for i,j in G.edges()]
+    
+    nx.draw(G,grid_positions(G,2),node_size=0.5,width=w,node_color=nc,edge_color=ec)
 
-# MT2507
-# Armand Halgreen
-print
-print 'MT2507 Computer project' 
-print
+#Computer project
+# MT2504 Computer project
+print 'MT2504 Computer project'
 
 
+# Exercise 1
+print 'Exercise 1'
+# Define your input n
+n=3
+# Define the function grid_vertices
+def grid_vertices(n):
+    s=[]
+    for i in xrange (0,n+1,1):
+        for j in xrange (0,n+1,1):
+            s.append((i,j))
+            
+    return s
+print 'Input value is',n
+print grid_vertices(n) 
+
+
+# Exercise 2
+print 'Exercise 2'
+# Define your inputs n1,n2
+n1=3
+n2=7
+# Define the function step_right
+def step_right(n1,n2):
+    s1=[] 
+    s1.append((n1,n2))
+    s1.append((n1+1,n2))
+    return s1
+print 'The input values are',n1,n2
+print 'output=',step_right(n1,n2) 
+
+
+# Exercise 3
+print 'Exercise 3'
+# Define your inputs n3,n4
+n3=3
+n4=7
+# Define the function step_up
+def step_up(n3,n4):
+    s2=[]
+    s2.append((n3,n4))     
+    s2.append((n3,n4+1))
+    return s2
+# Note enter now your input values in the ()
+print 'The input values are',n3,n4
+print 'output=',step_up(n3,n4) 
+
+
+# Exercise 4
+print 'Exercise 4'
+# Define your inputs n5,n6,n7,n8
+n5=1
+n6=1
+n7=1
+n8=1
+print 'The input values are',n5,n6,n7,n8
+my_list=(n5,n6,n7,n8)
+# Define the function set_to_path
+def set_to_path(n5,n6,n7,n8):
+    k=0
+    l=0
+    set_to_path=[]
+    for i in my_list: 
+        set_to_path.append([(k,l),(k+i,l+1-i)])
+        k=k+i
+        l=l+1-i
+    return set_to_path
+print 'output=',set_to_path(n5,n6,n7,n8)
+
+
+# Exercise 5
+print 'Exercise 5'
+# Define your input n9
+n9=5
+print 'The input value n9 is',n9
+# Define the function unifrom_set
+def uniform_set(n9):
+    s3=list(np.random.randint(2,size=n9))
+    return s3
+print 'output=',uniform_set(n9)
+
+
+
+# Exercise 6
+print 'Exercise 6'
 # Part 1
 print 'Part 1'
-print
-
-
-# Question 1
-print 'Question 1'
-print
-
-
-s=0.01
-r=0.4
-
-
-def F(x):
-    F=s-r*x+(x**2)/(1+x**2)
-    return F
-
-
-def dFdx(x):
-    dFdx=-r+(2*x)/(1+x**2)-(2*x**3)/((1+x**2)**2)
-    return dFdx
-
-
-xn3=np.linspace(0.0,2.5,50)
-fig1=plt.figure(2)
-ax1 = fig1.add_subplot(111)
-ax1.plot(xn3,F(xn3),'b-+')
-ax1.set_xlabel('$x$',size='large')
-ax1.set_ylabel('$F(x)$',size='large')
-plt.show()
-
-
-# Here you can choose the starting value for the Newton Raphson method due to the graph
-
-
-xn2=0.0 
-xn3=0.5
-xn4=2.0
-
-
-def xn(xn1,n,err):
-        error=1.0
-        n1=0
-        while ((abs(error) > abs(err)) and (n1 < n)):
-            n1 = n1+1
-            error=(-((F(xn1))/(dFdx(xn1))))
-            xn1 = xn1 + error
-            print 'n=',n1,'xn=',xn1,'xn-xn-1',error
-        return 'xn=',xn1,'nmax=',n,'xn-xn-1=',error,'number of iterations required=',n1,'error=',err
-
-
-# These are the different roots 
-
-
-print 'First root is'
-print xn(xn2,100,1*10**(-5))
-print
-print 'Second root is',
-print xn(xn3,100,1*10**(-5))
-print
-print 'Third root is'
-print xn(xn4,100,1*10**(-5))
-print
-
-
-    
-def Runge_Katta(xj,tj,h,n):
-    xj2=[]
-    xj0=xj
-    for i in xrange(n):
-        k1=F(xj)*h
-        k2=F(xj+k1/2.0)*h
-        k3=F(xj+k2/2.0)*h
-        k4=F(xj+k3)*h
-        xj1=xj+(1.0/6.0)*(k1+2*k2+2*k3+k4)
-        xj=xj1
-        xj2.append(xj1)
-        tj2=[]
-        for i in xrange(n):
-            tj2.append(tj+h*i)
-    fig2=plt.figure(2)
-    ax2 = fig2.add_subplot(111)
-    ax2.plot(tj2,xj2,'b-+')
-    ax2.set_xlabel('$t$',size='large')
-    ax2.set_ylabel('$x$',size='large')
-    plt.show()
-    return 'Initial conditions','tj=',tj,'xj=',xj0,'number of iterations=',n,'stepsize=',h
-
-
-# Question 2
-print 'Question 2'
-print
-
-
-print'a)'
-
-
-print Runge_Katta(0.45,0.0,0.25,20)
-print 
-
-
-print 'b)'
-print Runge_Katta(0.5,0.0,0.25,20) 
-print   
-    
+# Shuffle numbers from 1 to 9 inclusively
+print 'Shuffle numbers from 1 to 9 inclusively'
+x = [[i] for i in range(10)]
+print 'The input values are=',x
+np.random.shuffle(x)
+print 'Output=', x
 
 # Part 2
 print 'Part 2'
-print
+# Shuffle k1 1's and n10-k1 0's
+print 'Shuffle k1 1 s and n10-k1 0 s'
+# Note k1 and n10 are variables
+
+# Define your input values 
+k1=5
+n10=10
+k2=n10-k1
+print k1,'1 values'
+print k2,'0 values'
+my_list1=[]
+for i in range(k2):
+    my_list1.append(i*0)
+for i in range(k1):
+    my_list1.append(i*0+1)
+print 'The input values are', my_list1
+
+# Define the function uniform_k_set
+def uniform_k_set(n10,k1):
+    np.random.shuffle(my_list1)
+    return my_list1
+print 'For uniform_k_set(',n10,k1,') output=',uniform_k_set(n10,k1)
+
+# Exercise 7
+print 'Exercise 7'
+# Define your inputs n11,n12
+n11=5
+n12=3
+print 'The input values are',n11,n12
+# Define the function unifrom_set
+def uniform_sets(n11,n12):
+    s4=[]
+    for x in xrange (n11):
+        s3=list(np.random.randint(2,size=n12))
+        s4.append(s3)
+    return s4
+print 'For uniform_sets (',n11,',',n12,')output=', uniform_sets(n11,n12)
 
 
-def f1(a1,b1,c1,d1,xn5,yn1):
-    f1=a1-b1*xn5-c1*np.exp(d1*yn1)
-    return f1
+# Exercise 8
+print 'Exercise 8'
+# Define your inputs n13,n14
+n16=0
+n17=0
+n18=0
+
+n19=0
+n20=1
+n21=1
+
+n22=1
+n23=0
+n24=1
+
+n13=(n16,n17,n18)
+n14=(n19,n20,n21)
+n15=(n22,n23,n24)
+print 'The input values are',n13,n14,n15
+# Define the function unifrom_set
+def sets_to_paths(n13,n14,n15):
+   k=0
+   z=0
+   m=0
+   n=0
+   s=0
+   p=0
+   s8=[]
+   s5=[]
+   for i1 in n13:
+       s5.append([(k,z),(k+i1,z+1-i1)])
+       k=k+i1
+       z=z+1-i1
+       s8.append(s5)
+       s6=[]
+   for i2 in n14: 
+       s6.append([(m,n),(m+i2,n+1-i2)])
+       m=m+i2
+       n=n+1-i2
+       s8.append(s6)
+       s7=[]
+   for i3 in n15:
+       s7.append([(s,p),(s+i3,p+1-i3)])
+       s=s+i3
+       p=p+1-i3
+       s8.append(s7)
+       return s8
+print 'For sets_to_paths (',n13,',',n14,',',n15,')output=', sets_to_paths(n13,n14,n15)
+print 'Please note it prints each 3 times however unsure how to get rid of this'
+
+# Exercise 9
+print 'Exercise 9'
+# Define your inputs n25,n26
+n25=10000
+n26=100
+print 'The input values are',n25,n26
+# Define the function unifrom_set
+def uniform_sets1(n25,n26):
+    s9=[]
+    for x in xrange (n25):
+        s10=list(np.random.randint(2,size=n26))
+        s9.append(s10)
+    return s9
+print 'For uniform_sets (',n25,',',n26,')output is stored in u10k'
+
+# Store in variable u10k
+u10k=uniform_sets1(n25,n26)
 
 
-def f2(a2,b2,c2,d2,xn5,yn1):
-    f2=a2-b2*yn1-c2*np.exp(d2*xn5)
-    return f2
+# Exercise 10
+print 'Exercise 10'
+# Define your inputs n27,n28,n30
+n27=5
+n28=10
+n29=n28-n27
+n30=5
+print n27,'1 values'
+print n29,'0 values'
+s11=[]
+for i in range(n29):
+    s11.append(i*0)
+for i in range(n27):
+    s11.append(i*0+1)
+print s11
+print 'The input values are', s11
 
-
-def df1dx(a1,b1,c1,d1,xn5,yn1):
-    df1dx=-b1
-    return df1dx
-
-
-def df2dx(a2,b2,c2,d2,xn5,yn1):
-    df2dx=-c2*d2*np.exp(d2*xn5)
-    return df2dx
-
-
-def df1dy(a1,b1,c1,d1,xn5,yn1):
-    df2dy=-c1*d1*np.exp(d1*yn1)
-    return df2dy
-
-
-def df2dy(a2,b2,c2,d2,xn5,yn1):
-    df2dy=-b2
-    return df2dy
-
-
-def fig3(a1,a2,b1,b2,c1,c2,d1,d2):
-    xn6=np.linspace(0.0,0.9,50)
-    fig3=plt.figure(3)
-    ax3 = fig3.add_subplot(111)
-    ax3.plot(xn6,(1/d1)*(np.log((a1-b1*xn6)/(c1))),'b-+')
-    print np.log((a1-b1*xn6)/(c1))
-    ax3.plot(xn6,(1/b2)*(a2-c2*np.exp(d1*xn6)),'b-+')
-    ax3.set_xlabel('$x$',size='large')
-    ax3.set_ylabel('$y$',size='large')
-    plt.show()
-    return 
-
-
-# Here you can choose the starting value for the Newton Raphson method in 2D due to the graph
-
-
-xn7=1.0
-yn2=1.0
-
-
-def fourth_steady_state(xn5,yn1,a1,a2,b1,b2,c1,c2,d1,d2,err,nmax1):
-    errorx = 1.0
-    errory = 1.0
-    n = 0
-    xn7=xn5
-    yn2=yn1
-    while ((abs(errorx) > abs(err)) or (abs(errory) > abs(err)) and (n < nmax1)):
-        n = n+1
-        det = df2dx(a2,b2,c2,d2,xn5,yn1)*df1dy(a1,b1,c1,d1,xn5,yn1) - df2dy(a2,b2,c2,d2,xn5,yn1)*df1dx(a1,b1,c1,d1,xn5,yn1)
-        errorx = (- f2(a2,b2,c2,d2,xn5,yn1)*df1dy(a1,b1,c1,d1,xn5,yn1) + f1(a1,b1,c1,d1,xn5,yn1)*df2dy(a2,b2,c2,d2,xn5,yn1))/det
-        errory = (f2(a2,b2,c2,d2,xn5,yn1)*df1dx(a1,b1,c1,d1,xn5,yn1) - f1(a1,b1,c1,d1,xn5,yn1)*df2dx(a2,b2,c2,d2,xn5,yn1))/det
-        xn5 = xn5 + errorx
-        yn1 = yn1 + errory
-    print [[xn5],[yn1]]
-    return 'x=',xn5,'y=',yn1,'f1(x,y)=',f1(a1,b1,c1,d1,xn5,yn1),'f2(x,y)=',f2(a2,b2,c2,d2,xn5,yn1),'nmax=',nmax1,'error=',err,'starting point',(xn7,yn2)
- 
-    
-print fourth_steady_state(xn7,yn2,1.0,1.0,1.0,1.0,0.1,0.2,0.1,0.3,1.0e-6,30)    
-print
-
-
-# Part 3
-print 'Part 3'
-print    
-
-
-def dxdt(tn,xn8,yn3,a,b):
-    dxdt=1.0-(1.0+b)*xn8+(a*(xn8**(2.0))*yn3)
-    return dxdt
-
-
-def dydt(tn,xn8,yn3,a,b):
-    dydt=b*xn8-a*((xn8**(2.0))*yn3)
-    return dydt
-
-
-
-def Runge_Katta(tj,xj,yj,h,n,a,b):
-    tj1=[]
-    xj1=[]
-    yj1=[]
-    for i in xrange(n):
-        k1=dxdt(tj,xj,yj,a,b)
-        l1=dydt(tj,xj,yj,a,b)
-        k2=dxdt(tj+0.5*h,xj+0.5*h*k1,yj+0.5*h*l1,a,b)
-        l2=dydt(tj+0.5*h,xj+0.5*h*k1,yj+0.5*h*l1,a,b)
-        k3=dxdt(tj+0.5*h,xj+0.5*h*k2,yj+0.5*h*l2,a,b)
-        l3=dydt(tj+0.5*h,xj+0.5*h*k2,yj+0.5*h*l2,a,b)
-        k4=dxdt(tj+h,xj+h*k3,yj+h*l3,a,b)
-        l4=dydt(tj+h,xj+h*k3,yj+h*l3,a,b)
-        k=(1.0/6.0)*(k1+2.0*k2+2.0*k3+k4)
-        l=(1.0/6.0)*(l1+2.0*l2+2.0*l3+l4)
-        tj=(tj+h)
-        tj1.append(tj)
-        xj=(xj+h*k)
-        xj1.append(xj)
-        yj=(yj+h*l)
-        yj1.append(yj)
-    fig4=plt.figure(4)
-    print'Question 1'
-    print 
-    print 'For a=',a,'b=',b
-    print
-    print 'The solution is',('xj1=',xj1[n-1],'yj1=',yj1[n-1]),'and for tj1=',tj1[n-1]
-    print
-    print'Question 2'
-    print'a)'
-    print 
-    ax4 = fig4.add_subplot(111)
-    ax4.plot(tj1,xj1,'b-+')
-    ax4.set_xlabel('$t$',size='large')
-    ax4.set_ylabel('$x$',size='large')
-    plt.show()
-    print
-    fig5=plt.figure(5)
-    ax5 = fig5.add_subplot(111)
-    ax5.plot(tj1,yj1,'b-+')
-    ax5.set_xlabel('$t$',size='large')
-    ax5.set_ylabel('$y$',size='large')
-    plt.show()
-    print
-    print'b)'
-    print 'For a=',a,'b=',b    
-    print
-    print 'Phase plane'
-    fig6=plt.figure(6)
-    ax6 = fig6.add_subplot(111)
-    ax6.plot(xj1,yj1,'b-+')
-    ax6.set_xlabel('$x$',size='large')
-    ax6.set_ylabel('$y$',size='large')
-    plt.show()
-    return
-
-
-
-
-
-print Runge_Katta(0.1,0.1,0.1,0.25,1000,(input("What is a? ")),(input("What is b? ")))
-print
-print Runge_Katta(0.1,0.1,0.1,0.25,1000,(input("What is a? ")),(input("What is b? ")))
+# Define the function uniform_k_set
+def uniform_k_sets(n27,n28,n30):
+    s12=[]
+    for i in range(n30):
+        np.random.shuffle(s11)
+        s12.append(s11)
+    return s12
+print 'For uniform_k_sets(',n27,n28,n30,') output=', uniform_k_sets(n27,n28,n30)
